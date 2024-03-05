@@ -19,6 +19,10 @@ export class PasswordService {
     return hash(password, this.bcryptSaltRounds);
   }
 
+  hashPaymentMethod(paymentMethod: string): Promise<string> {
+    return hash(paymentMethod, this.bcryptSaltRounds);
+  }
+
   async generatePassword() {
     let randomAlphanumericString = '';
     let isMatch = false;

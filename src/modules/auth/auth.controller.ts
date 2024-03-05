@@ -1,34 +1,60 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete } from '@nestjs/common';
+import {
+  Controller,
+  Post,
+  Body,
+  HttpCode,
+  Inject,
+  UnauthorizedException,
+} from '@nestjs/common';
+
+import { ApiOkResponse, ApiOperation, ApiTags } from '@nestjs/swagger';
+import { BaseResponseEntity } from 'src/entities/base-response.entity';
 import { AuthService } from './auth.service';
-import { CreateAuthDto } from './dto/create-auth.dto';
-import { UpdateAuthDto } from './dto/update-auth.dto';
+import { EmailLoginAuthDto } from './dto/email-login-auth.dto';
+import { EmailSignupAuthDto } from './dto/email-signup-auth.dto';
 
-@Controller('auth')
+@ApiTags('auth')
+@Controller('api/v1/auth')
 export class AuthController {
-  constructor(private readonly authService: AuthService) {}
+  constructor(@Inject(AuthService) private readonly authService: AuthService) {}
 
-  @Post()
-  create(@Body() createAuthDto: CreateAuthDto) {
-    return this.authService.create(createAuthDto);
+  @ApiOperation({ summary: 'Signup a user using email and mobile' })
+  @ApiOkResponse({ type: BaseResponseEntity })
+  @Post('email-signup')
+  @HttpCode(200)
+  async emailSignup(
+    @Body() emailSignupAuthDto: EmailSignupAuthDto,
+  ): Promise<BaseResponseEntity> {
+    const response = await this.authService.emailSignup(emailSignupAuthDto);
+    if (typeof response !== 'string')
+      return {
+        message: 'Signed up successfully',
+        data: response,
+      };
+
+    throw new UnauthorizedException({
+      message: response,
+      data: {},
+    });
   }
 
-  @Get()
-  findAll() {
-    return this.authService.findAll();
-  }
+  @ApiOperation({ summary: 'Login a user using email' })
+  @ApiOkResponse({ type: BaseResponseEntity })
+  @Post('email-login')
+  @HttpCode(200)
+  async emailLogin(
+    @Body() emailLoginAuthDto: EmailLoginAuthDto,
+  ): Promise<BaseResponseEntity> {
+    const response = await this.authService.emailLogin(emailLoginAuthDto);
+    if (typeof response !== 'string')
+      return {
+        message: 'Logged in successfully',
+        data: response,
+      };
 
-  @Get(':id')
-  findOne(@Param('id') id: string) {
-    return this.authService.findOne(+id);
-  }
-
-  @Patch(':id')
-  update(@Param('id') id: string, @Body() updateAuthDto: UpdateAuthDto) {
-    return this.authService.update(+id, updateAuthDto);
-  }
-
-  @Delete(':id')
-  remove(@Param('id') id: string) {
-    return this.authService.remove(+id);
+    throw new UnauthorizedException({
+      message: response,
+      data: {},
+    });
   }
 }

@@ -1,3 +1,5 @@
+import { UserTypeEnum } from '../enum/user.enum';
+
 export class User {
   id: string;
   userEmailId: string;
@@ -6,6 +8,7 @@ export class User {
   userPassword: string;
   userMobileno: string;
   userCountrycode: string;
+  userType: UserTypeEnum;
 
   constructor(
     id: string,

@@ -11,6 +11,7 @@ import helmet from '@fastify/helmet';
 import compression from '@fastify/compress';
 import fastifyCsrf from '@fastify/csrf-protection';
 import { AppModule } from './app.module';
+import { swaggerInit } from './config/swagger-config';
 // import { swaggerInit } from './config/swagger-config';
 
 async function bootstrap() {
@@ -39,10 +40,7 @@ async function bootstrap() {
   app.enableShutdownHooks();
   app.enableCors();
   app.register(fastifyMultipart, { attachFieldsToBody: true });
-  // configService.get('NODE_ENV') != 'production' ||
-  // configService.get('NODE_ENV') != 'staging'
-  //   ? swaggerInit(app)
-  //   : null;
+  configService.get('NODE_ENV') != 'production' ? swaggerInit(app) : null;
 
   await app.listen(
     PORT,

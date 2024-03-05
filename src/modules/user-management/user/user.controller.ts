@@ -8,6 +8,7 @@ import {
   Param,
   HttpStatus,
   HttpException,
+  UseGuards,
 } from '@nestjs/common';
 import {
   ApiTags,
@@ -20,27 +21,13 @@ import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
 import { UserService } from './user.service';
 import { User } from './entities/user.entity';
+import { AuthGuard } from '@nestjs/passport';
+import { AuthUser } from 'src/decorators/user.decorator';
 
 @ApiTags('User Management')
 @Controller('users')
 export class UserController {
   constructor(private readonly userService: UserService) {}
-
-  @ApiOperation({ summary: 'Create a new user' })
-  @ApiResponse({
-    status: 201,
-    description: 'User created successfully',
-    type: User,
-  })
-  @ApiBadRequestResponse({ description: 'Invalid input data' })
-  @Post()
-  async createUser(@Body() createUserDto: CreateUserDto): Promise<User> {
-    try {
-      return await this.userService.createUser(createUserDto);
-    } catch (error) {
-      throw new HttpException(error.message, HttpStatus.BAD_REQUEST);
-    }
-  }
 
   @ApiOperation({ summary: 'Get all users' })
   @ApiResponse({
@@ -50,9 +37,10 @@ export class UserController {
     isArray: true,
   })
   @Get()
-  async findAllUsers(): Promise<User[]> {
+  @UseGuards(AuthGuard('jwt'))
+  async findAllUsers(@AuthUser() user: any): Promise<User[]> {
     try {
-      return await this.userService.findAllUsers();
+      return await this.userService.findAllUsers(user);
     } catch (error) {
       throw new HttpException(
         'Internal Server Error',
@@ -69,9 +57,13 @@ export class UserController {
   })
   @ApiNotFoundResponse({ description: 'User not found' })
   @Get(':id')
-  async findUserById(@Param('id') id: string): Promise<User> {
+  @UseGuards(AuthGuard('jwt'))
+  async findUserById(
+    @AuthUser() user: any,
+    @Param('id') id: string,
+  ): Promise<User> {
     try {
-      const user = await this.userService.findUserById(id);
+      const userById = await this.userService.findUserById(user, id);
       if (!user) {
         throw new HttpException('User not found', HttpStatus.NOT_FOUND);
       }
@@ -93,12 +85,18 @@ export class UserController {
   @ApiNotFoundResponse({ description: 'User not found' })
   @ApiBadRequestResponse({ description: 'Invalid input data' })
   @Put(':id')
+  @UseGuards(AuthGuard('jwt'))
   async updateUser(
+    @AuthUser() user: any,
     @Param('id') id: string,
     @Body() updateUserDto: UpdateUserDto,
   ): Promise<User> {
     try {
-      const updatedUser = await this.userService.updateUser(id, updateUserDto);
+      const updatedUser = await this.userService.updateUser(
+        user,
+        id,
+        updateUserDto,
+      );
       if (!updatedUser) {
         throw new HttpException('User not found', HttpStatus.NOT_FOUND);
       }
@@ -115,9 +113,13 @@ export class UserController {
   @ApiResponse({ status: 200, description: 'User deleted successfully' })
   @ApiNotFoundResponse({ description: 'User not found' })
   @Delete(':id')
-  async deleteUser(@Param('id') id: string): Promise<void> {
+  @UseGuards(AuthGuard('jwt'))
+  async deleteUser(
+    @AuthUser() user: any,
+    @Param('id') id: string,
+  ): Promise<void> {
     try {
-      const result = await this.userService.deleteUser(id);
+      const result = await this.userService.deleteUser(user, id);
       if (!result) {
         throw new HttpException('User not found', HttpStatus.NOT_FOUND);
       }

@@ -6,13 +6,14 @@ import {
   IsEmail,
   Length,
   Matches,
+  IsEnum,
 } from 'class-validator';
+import { UserTypeEnum } from '../enum/user.enum';
 
 export class CreateUserDto {
   @ApiProperty({ required: false })
   @IsString()
   @IsEmail({}, { message: 'Invalid email format' })
-  @IsOptional()
   userEmailId?: string;
 
   @ApiProperty()
@@ -44,4 +45,13 @@ export class CreateUserDto {
   @IsString()
   @IsNotEmpty({ message: 'Country code must not be empty' })
   userCountrycode: string;
+
+  @ApiProperty({
+    example: UserTypeEnum.CUSTOMER,
+    description: 'The type of the user',
+    enum: UserTypeEnum,
+  })
+  @IsEnum(UserTypeEnum, { message: 'Invalid user type' })
+  @IsNotEmpty({ message: 'User type is required' })
+  userType: UserTypeEnum;
 }

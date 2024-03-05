@@ -7,6 +7,8 @@ import { TransactionModule } from './modules/transaction-management/transaction/
 import dbConfig from './config/database-config';
 import { LoggerModule } from 'nestjs-pino';
 import appConfig from './config/app-config';
+import { ErrorHandlerService } from './utils/error-handler/error-handler.service';
+import { ErrorHandlerModule } from './utils/error-handler/error-handler.module';
 
 @Module({
   imports: [
@@ -46,8 +48,9 @@ import appConfig from './config/app-config';
     DatabaseModule,
     AuthModule,
     TransactionModule,
+    ErrorHandlerModule,
   ],
   controllers: [],
-  providers: [],
+  providers: [ErrorHandlerService],
 })
 export class AppModule {}
