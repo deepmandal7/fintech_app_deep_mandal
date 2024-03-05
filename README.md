@@ -50,5 +50,5 @@ This concise note highlights the purpose of the server, acknowledges its limitat
 
 All the API endpoints can be found on below endpoint, which is Swagger Documentation:
 
-<a href="http://localhost:5001/api" target="_blank">Nest.js</a>
+<a href="http://localhost:5001/api" target="_blank">Local Swagger Link</a>
 
