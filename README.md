@@ -4,7 +4,7 @@
 
 ## Description
 
-[client-booking-dispatch](https://bitbucket.org/roldrive1/client-booking-dispatch) server.
+[fintech_app_deep_mandal](https://github.com/deepmandal7/fintech_app_deep_mandal) server.
 
 ## Installation
 

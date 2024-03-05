@@ -2,8 +2,8 @@ import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
 
 export const swaggerInit = (app) => {
   const swaggerConfig = new DocumentBuilder()
-    .setTitle('RolDrive')
-    .setDescription('The RolDrive API description')
+    .setTitle('fintech_app_deep_mandal')
+    .setDescription('The fintech_app_deep_mandal API description')
     .setVersion('3.0.3')
     .addBearerAuth(
       {
@@ -17,7 +17,7 @@ export const swaggerInit = (app) => {
       'access-token',
     )
     .setExternalDoc('Postman Collection', '/docs-json')
-    .addTag('RolDrive')
+    .addTag('fintech_app_deep_mandal')
     .build();
   const document = SwaggerModule.createDocument(app, swaggerConfig);
 
